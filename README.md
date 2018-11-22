@@ -9,36 +9,44 @@ In the project directory, you can run:
 Runs the app in the development mode.<br>
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
 
-### `npm test`
+##Important comments to do on package.json, on the "babel" label (~ line 117)
+https://github.com/zeit/next.js/issues/5231
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+"It is extremely tricky to use mobx together with next@7. After spending several days investigating next@7, mobx, bable plugins, I make the minimal sample code of "mobx + next@7". Here is the repo:
+"https://github.com/jim-king-2000/nextbugrepro.git"
+"git@github.com:jim-king-2000/nextbugrepro.git"
 
-### `npm run build`
+The trickiest thing is in the .babelrc file.
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+{
+  "presets": [
+    "next/babel"
+  ],
+  "plugins": [
+    ["@babel/plugin-proposal-decorators", { "legacy": true }],
+    ["@babel/plugin-proposal-class-properties", { "loose": true }]
+  ]
+}
+We have to use the two plugins above for the decorator grammar. And the order of the two plugins cannot be reversed.
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+I strongly suggest that "mobx + next@7" should be added into the tutorial of next.js."
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+###ALSO
+https://github.com/jim-king-2000/mobxSampleWithNext7
 
-### `npm run eject`
+# MobX Sample with Next.js v7
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## Why creating the sample
+Nearly all MobX samples recommand “transform-decorators-legacy” babel plug-in for supporting the decorator grammar. It works with next@6. When upgrading to Next@7, the babel plug-in “transform-decorators-legacy” is not available anymore. We have to look for the new plug-in(s) for the decorator grammar. So here is the sample.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## The key point
+The key point is in the .bablerc file. We have to use the two plug-ins below with the right arguments. And the order of the two lines cannot be changed.
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+```javascript
+// .babelrc
+"plugins": [
+  ["@babel/plugin-proposal-decorators", { "legacy": true }],
+  ["@babel/plugin-proposal-class-properties", { "loose": true }]
+]
+```
